@@ -11,7 +11,7 @@ POPPLER_PATH = r'C:\Program Files\poppler-24.08.0\Library\bin'
 
 def extract_bangla_text_from_pdf(pdf_path, output_txt_path=None):
     """
-    Extract Bangla text from a PDF file using Tesseract
+    Extract Bangla and English text from a PDF file using Tesseract
     
     Args:
         pdf_path: Path to the PDF file
@@ -26,7 +26,7 @@ def extract_bangla_text_from_pdf(pdf_path, output_txt_path=None):
     with tempfile.TemporaryDirectory() as temp_dir:
         # Convert PDF to images
         # For Windows users: add poppler_path=POPPLER_PATH to the arguments below if needed
-        images = convert_from_path(pdf_path, dpi=300, output_folder=temp_dir)
+        images = convert_from_path(pdf_path, dpi=300, output_folder=temp_dir, poppler_path=POPPLER_PATH)
         
         print(f"PDF has {len(images)} pages. Processing...")
         
@@ -41,9 +41,9 @@ def extract_bangla_text_from_pdf(pdf_path, output_txt_path=None):
             # plt.title(f"Page {i+1}")
             # plt.show()
             
-            # Extract text with Tesseract
+            # Extract text with Tesseract - using both Bengali and English languages
             print(f"Extracting text from page {i+1}...")
-            custom_config = r'--oem 3 --psm 6 -l ben'  # Use Bangla language
+            custom_config = r'--oem 3 --psm 6 -l ben+eng'  # Use both Bangla and English languages
             extracted_text = pytesseract.image_to_string(image, config=custom_config)
             
             # Add page number for better organization
@@ -64,8 +64,8 @@ def extract_bangla_text_from_pdf(pdf_path, output_txt_path=None):
 # Main execution
 if __name__ == "__main__":
     # Update with your local paths
-    pdf_path = "bn.pdf"  # PDF in the same directory as the script
-    output_txt_path = "bn_outp.txt"
+    pdf_path = "ict.pdf"  # PDF in the same directory as the script
+    output_txt_path = "ict.txt"
     
     extracted_text = extract_bangla_text_from_pdf(pdf_path, output_txt_path)
     
