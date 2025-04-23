@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PDF Text Extractor</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .container {
+            max-width: 800px;
+            margin-top: 50px;
+            margin-bottom: 50px;
+        }
+        .card {
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .card-header {
+            background-color: #4a6ed0;
+            color: white;
+            font-weight: bold;
+            border-radius: 10px 10px 0 0 !important;
+        }
+        .btn-primary {
+            background-color: #4a6ed0;
+            border-color: #4a6ed0;
+        }
+        .btn-primary:hover {
+            background-color: #3a5bb0;
+            border-color: #3a5bb0;
+        }
+        .processing-option {
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+        .processing-option:hover {
+            background-color: #f0f0f0;
+            border-color: #4a6ed0;
+        }
+        .file-upload {
+            border: 2px dashed #ddd;
+            padding: 20px;
+            border-radius: 5px;
+            text-align: center;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+        }
+        .file-upload:hover {
+            border-color: #4a6ed0;
+        }
+        .file-upload-preview {
+            display: none;
+            margin-top: 10px;
+        }
+        .alert {
+            border-radius: 5px;
+        }
+        
+        /* Added new styles for footer */
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            padding: 15px;
+            color: #6c757d;
+            font-size: 0.9rem;
+            border-top: 1px solid #eaeaea;
+        }
+        
+        .copyright {
+            display: inline-block;
+            padding: 8px 15px;
+            border-radius: 20px;
+            background-color: #f8f9fa;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+        }
+        
+        .copyright:hover {
+            background-color: #e9ecef;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+
+        /* Progress styles */
+        #processing-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            color: white;
+        }
+        
+        .spinner-border {
+            width: 3rem;
+            height: 3rem;
+        }
+        
+        .processing-text {
+            margin-top: 15px;
+            font-size: 1.5rem;
+            font-weight: 500;
+        }
+        
+        .status-icon {
+            font-size: 1.2rem;
+            margin-right: 8px;
+        }
+        
+        .status-message {
+            display: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            margin-top: 15px;
+            font-weight: 500;
+            text-align: center;
+        }
+        
+        .status-success {
+            background-color: #28a745;
+            color: white;
+        }
+        
+        .drag-area {
+            padding: 30px;
+            border: 3px dashed #ddd;
+            border-radius: 10px;
+            text-align: center;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .drag-area.active {
+            border-color: #4a6ed0;
+            background-color: rgba(74, 110, 208, 0.1);
+        }
+        
+        .drag-area .icon {
+            font-size: 50px;
+            color: #4a6ed0;
+        }
+        
+        .file-details {
+            display: none;
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #e9ecef;
+        }
+    </style>
+</head>
+<body>
+    <div id="processing-overlay">
+        <div class="spinner-border text-light" role="status">
+            <span class="visually-hidden">Processing...</span>
+        </div>
+        <div class="processing-text">Processing your PDF...</div>
+        <div id="processing-status" class="processing-text mt-3"></div>
+        
+        <div class="progress-animated">
+            <div class="progress-bar-animated"></div>
+        </div>
+        
+        <div id="success-animation" style="display: none; margin-top: 20px;">
+            <svg class="checkmark" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 52 52">
+                <circle class="checkmark__circle" cx="26" cy="26" r="25" fill="none"/>
+                <path class="checkmark__check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+            </svg>
+            <div class="text-white mt-3">Complete Conversion!</div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="card">
+            <div class="card-header text-center">
+                <h2>PDF Text Extractor</h2>
+                <p class="mb-0">Extract text from PDF files using different methods</p>
+            </div>
+            <div class="card-body">
+                <div id="status-message" class="status-message mb-4"></div>
+                
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        <div id="flash-messages">
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ 'success' if category == 'success' else 'danger' }}" role="alert">
+                                    {{ message }}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endwith %}
+
+                <form id="pdf-form" action="{{ url_for('process_pdf') }}" method="post" enctype="multipart/form-data">
+                    <div class="drag-area" id="drop-area">
+                        <div class="icon">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                        </div>
+                        <h5>Drag & Drop your PDF here</h5>
+                        <p>or</p>
+                        <button type="button" class="btn btn-outline-primary" id="browse-btn">Browse File</button>
+                        <input type="file" name="pdf_file" id="file-input" class="d-none" accept=".pdf" required>
+                        
+                        <div id="file-details" class="file-details">
+                            <i class="fas fa-file-pdf text-danger me-2"></i>
+                            <span id="file-name">No file selected</span>
+                            <button type="button" class="btn btn-sm btn-outline-danger ms-3" id="remove-file">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <h5 class="mb-3 mt-4">Select Processing Method:</h5>
+                    
+                    <div class="processing-option">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="processing_method" id="no_ocr_english" value="no_ocr_english" checked>
+                            <label class="form-check-label" for="no_ocr_english">
+                                <strong>NO OCR Based English</strong> - For English PDF files
+                            </label>
+                        </div>
+                        <small class="text-muted">Uses direct text extraction without OCR for English PDF files</small>
+                    </div>
+
+                    <div class="processing-option">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="processing_method" id="ocr_bangla" value="ocr_bangla">
+                            <label class="form-check-label" for="ocr_bangla">
+                                <strong>OCR Based Bangla</strong> - For image-based Bangla PDF files
+                            </label>
+                        </div>
+                        <small class="text-muted">Uses OCR to extract Bangla text from image-based PDFs (good for CQ files)</small>
+                    </div>
+
+                    <div class="processing-option">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="processing_method" id="ocr_multi" value="ocr_multi">
+                            <label class="form-check-label" for="ocr_multi">
+                                <strong>OCR Based Multi-Language</strong> - Auto-detects Bangla or English
+                            </label>
+                        </div>
+                        <small class="text-muted">Uses OCR with auto-language detection for mixed content PDF files</small>
+                    </div>
+
+                    <div class="processing-option">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="processing_method" id="ocr_split" value="ocr_split">
+                            <label class="form-check-label" for="ocr_split">
+                                <strong>OCR Split Format</strong> - For MCQ PDFs with split pages
+                            </label>
+                        </div>
+                        <small class="text-muted">Splits PDF pages into left and right halves before OCR (best for MCQ PDF files)</small>
+                    </div>
+
+                    <h5 class="mb-3 mt-4">Output Format:</h5>
+                    <div class="mb-3">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="output_format" id="txt_format" value="txt" checked>
+                            <label class="form-check-label" for="txt_format">TXT</label>
+                        </div>
+                        <small class="form-text text-muted">All processing methods output to TXT format</small>
+                    </div>
+
+                    <div class="d-grid gap-2 mt-4">
+                        <button type="submit" id="process-btn" class="btn btn-primary btn-lg">
+                            <i class="fas fa-cogs me-2"></i>Process PDF
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Copyright Footer -->
+    <footer>
+        <div class="copyright">
+            <span>Copyright &copy; DataSoft 2025. All rights reserved.</span>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('pdf-form');
+            const dropArea = document.getElementById('drop-area');
+            const fileInput = document.getElementById('file-input');
+            const browseBtn = document.getElementById('browse-btn');
+            const removeBtn = document.getElementById('remove-file');
+            const fileDetails = document.getElementById('file-details');
+            const fileName = document.getElementById('file-name');
+            const processBtn = document.getElementById('process-btn');
+            const processingOverlay = document.getElementById('processing-overlay');
+            const statusMessage = document.getElementById('status-message');
+            const processingStatus = document.getElementById('processing-status');
+            const flashMessages = document.getElementById('flash-messages');
+            
+            // Check if we need to suppress flash messages
+            if (localStorage.getItem('suppressFlashMessages') === 'true') {
+                if (flashMessages) {
+                    flashMessages.style.display = 'none';
+                }
+                localStorage.removeItem('suppressFlashMessages');
+            }
+            
+            // Check if we're returning from processing
+            if (localStorage.getItem('pdfProcessing') === 'true' && !window.location.pathname.includes('/download/')) {
+                // We're returning to the main page after processing
+                if (localStorage.getItem('downloadInitiated') === 'true') {
+                    // The download has been initiated, show success message
+                    showStatus('Complete Conversion! Your file has been successfully processed and downloaded.', 'success');
+                    
+                    // Hide any flash messages - they're redundant with our success message
+                    if (flashMessages) {
+                        flashMessages.style.display = 'none';
+                    }
+                    
+                    // Calculate and show processing time
+                    if (localStorage.getItem('processingStartTime')) {
+                        const startTime = parseInt(localStorage.getItem('processingStartTime'));
+                        const endTime = Date.now();
+                        const duration = Math.round((endTime - startTime) / 1000); // in seconds
+                        
+                        // Add processing time info to status message
+                        const timeInfo = document.createElement('div');
+                        timeInfo.className = 'mt-2 small text-muted';
+                        timeInfo.textContent = `Processing completed in ${duration} seconds`;
+                        statusMessage.appendChild(timeInfo);
+                    }
+                    
+                    // Clear all flags
+                    localStorage.removeItem('pdfProcessing');
+                    localStorage.removeItem('downloadInitiated');
+                    localStorage.removeItem('processingStartTime');
+                    localStorage.removeItem('showSuccessAnimation');
+                }
+            }
+            
+            // Open file dialog when browse button is clicked
+            browseBtn.addEventListener('click', () => {
+                fileInput.click();
+            });
+            
+            // Handle file selection
+            fileInput.addEventListener('change', function() {
+                if (this.files.length > 0) {
+                    showFileDetails(this.files[0]);
+                }
+            });
+            
+            // Remove selected file
+            removeBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                fileInput.value = '';
+                fileDetails.style.display = 'none';
+                dropArea.classList.remove('active');
+            });
+            
+            // Drag and drop events
+            ['dragover', 'dragleave', 'drop'].forEach(eventName => {
+                dropArea.addEventListener(eventName, preventDefaults, false);
+            });
+            
+            function preventDefaults(e) {
+                e.preventDefault();
+                e.stopPropagation();
+            }
+            
+            // Highlight drop area when file is dragged over
+            ['dragenter', 'dragover'].forEach(eventName => {
+                dropArea.addEventListener(eventName, () => {
+                    dropArea.classList.add('active');
+                });
+            });
+            
+            ['dragleave', 'drop'].forEach(eventName => {
+                dropArea.addEventListener(eventName, () => {
+                    dropArea.classList.remove('active');
+                });
+            });
+            
+            // Handle dropped files
+            dropArea.addEventListener('drop', (e) => {
+                const dt = e.dataTransfer;
+                const files = dt.files;
+                
+                if (files.length > 0) {
+                    fileInput.files = files;
+                    showFileDetails(files[0]);
+                }
+            });
+            
+            // Show file details
+            function showFileDetails(file) {
+                if (file.type !== 'application/pdf') {
+                    showStatus('Please select a PDF file', 'danger');
+                    return;
+                }
+                
+                fileName.textContent = file.name;
+                fileDetails.style.display = 'block';
+                dropArea.classList.add('active');
+                
+                // Add animation to file details
+                fileDetails.classList.add('animate__animated', 'animate__fadeIn');
+                
+                clearStatus();
+            }
+            
+            // Form submission
+            form.addEventListener('submit', function(e) {
+                if (!fileInput.files.length) {
+                    e.preventDefault();
+                    showStatus('Please select a PDF file', 'danger');
+                    return;
+                }
+                
+                // Get selected processing method
+                const selectedMethod = document.querySelector('input[name="processing_method"]:checked').value;
+                
+                // Update the processing message based on the selected method
+                let processingMessage = 'Processing your PDF...';
+                
+                switch (selectedMethod) {
+                    case 'no_ocr_english':
+                        processingMessage = 'Extracting text from your English PDF...';
+                        break;
+                    case 'ocr_bangla':
+                        processingMessage = 'Extracting Bangla text using OCR...';
+                        break;
+                    case 'ocr_multi':
+                        processingMessage = 'Analyzing and extracting multi-language content...';
+                        break;
+                    case 'ocr_split':
+                        processingMessage = 'Processing split-page PDF with OCR...';
+                        break;
+                }
+                
+                // Update the processing message
+                const processingText = processingOverlay.querySelector('.processing-text');
+                if (processingText) {
+                    processingText.textContent = processingMessage;
+                }
+                
+                // Show processing overlay with fade-in animation
+                processingOverlay.style.opacity = 0;
+                processingOverlay.style.display = 'flex';
+                
+                // Animate fade-in
+                setTimeout(() => {
+                    processingOverlay.style.opacity = 1;
+                    processingOverlay.style.transition = 'opacity 0.3s ease-in-out';
+                }, 10);
+                
+                // Track processing stages
+                let processingStage = 0;
+                const stages = [
+                    'Analyzing PDF structure...',
+                    'Extracting text content...',
+                    'Processing text data...',
+                    'Finalizing conversion...'
+                ];
+                
+                // Update processing status message every few seconds
+                const stageInterval = setInterval(() => {
+                    if (processingStage < stages.length) {
+                        processingStatus.textContent = stages[processingStage];
+                        processingStatus.classList.add('animate__animated', 'animate__fadeIn');
+                        // Remove animation class after animation completes
+                        setTimeout(() => {
+                            processingStatus.classList.remove('animate__animated', 'animate__fadeIn');
+                        }, 1000);
+                        processingStage++;
+                    } else {
+                        clearInterval(stageInterval);
+                    }
+                }, 2500);
+                
+                // Record the start time
+                localStorage.setItem('processingStartTime', Date.now().toString());
+                
+                // Set flag that we're processing a PDF
+                localStorage.setItem('pdfProcessing', 'true');
+                localStorage.setItem('downloadInitiated', 'false');
+                
+                // Store the processing method for showing appropriate success message
+                localStorage.setItem('processingMethod', selectedMethod);
+            });
+            
+            // Show status message
+            function showStatus(message, type) {
+                statusMessage.textContent = message;
+                statusMessage.className = 'status-message mb-4 alert alert-' + type;
+                statusMessage.style.display = 'block';
+                
+                // Add animation
+                statusMessage.classList.add('animate__animated', 'animate__fadeIn');
+                
+                // Auto-hide after 5 seconds for success messages
+                if (type === 'success') {
+                    setTimeout(() => {
+                        // Fade out
+                        statusMessage.classList.remove('animate__fadeIn');
+                        statusMessage.classList.add('animate__fadeOut');
+                        
+                        setTimeout(() => {
+                            statusMessage.style.display = 'none';
+                            statusMessage.classList.remove('animate__animated', 'animate__fadeOut');
+                        }, 1000);
+                    }, 5000);
+                }
+            }
+            
+            // Clear status message
+            function clearStatus() {
+                statusMessage.style.display = 'none';
+            }
+            
+            // Add pulse animation to process button on hover
+            if (processBtn) {
+                processBtn.addEventListener('mouseenter', function() {
+                    this.classList.add('animate__animated', 'animate__pulse');
+                });
+                
+                processBtn.addEventListener('mouseleave', function() {
+                    this.classList.remove('animate__animated', 'animate__pulse');
+                });
+            }
+            
+            // Highlight the selected processing option
+            const processingOptions = document.querySelectorAll('.processing-option');
+            processingOptions.forEach(option => {
+                const radio = option.querySelector('input[type="radio"]');
+                if (radio) {
+                    // Set initial state
+                    if (radio.checked) {
+                        option.classList.add('processing-active');
+                    }
+                    
+                    // Update on change
+                    radio.addEventListener('change', function() {
+                        processingOptions.forEach(opt => opt.classList.remove('processing-active'));
+                        if (this.checked) {
+                            option.classList.add('processing-active');
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

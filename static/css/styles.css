@@ -1,0 +1,135 @@
+/**
+ * PDF Text Extractor - Custom Styles
+ */
+
+/* PDF Processing animations */
+@keyframes pulse-border {
+  0% {
+    border-color: #4a6ed0;
+    box-shadow: 0 0 0 0 rgba(74, 110, 208, 0.7);
+  }
+  
+  70% {
+    border-color: #3a5bb0;
+    box-shadow: 0 0 0 10px rgba(74, 110, 208, 0);
+  }
+  
+  100% {
+    border-color: #4a6ed0;
+    box-shadow: 0 0 0 0 rgba(74, 110, 208, 0);
+  }
+}
+
+.processing-active {
+  animation: pulse-border 2s infinite;
+}
+
+/* Custom transitions */
+.fade-transition {
+  transition: all 0.3s ease-in-out;
+}
+
+/* Success check mark animation */
+.checkmark {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: block;
+  stroke-width: 3;
+  stroke: #fff;
+  stroke-miterlimit: 10;
+  box-shadow: inset 0px 0px 0px #28a745;
+  animation: fill .4s ease-in-out .4s forwards, scale .3s ease-in-out .9s both;
+  position: relative;
+  margin: 0 auto;
+}
+
+.checkmark__circle {
+  stroke-dasharray: 166;
+  stroke-dashoffset: 166;
+  stroke-width: 2;
+  stroke-miterlimit: 10;
+  stroke: #28a745;
+  fill: none;
+  animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+}
+
+.checkmark__check {
+  transform-origin: 50% 50%;
+  stroke-dasharray: 48;
+  stroke-dashoffset: 48;
+  animation: stroke 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.8s forwards;
+}
+
+@keyframes stroke {
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes scale {
+  0%, 100% {
+    transform: none;
+  }
+  50% {
+    transform: scale3d(1.1, 1.1, 1);
+  }
+}
+
+@keyframes fill {
+  100% {
+    box-shadow: inset 0px 0px 0px 30px #28a745;
+  }
+}
+
+/* Responsive improvements */
+@media (max-width: 768px) {
+  .container {
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+  
+  .processing-text {
+    font-size: 1.2rem;
+  }
+}
+
+/* Focus indicators for better accessibility */
+.btn:focus, input:focus {
+  box-shadow: 0 0 0 0.25rem rgba(74, 110, 208, 0.5);
+}
+
+/* Animated progress bar */
+.progress-animated {
+  height: 6px;
+  background-color: #e9ecef;
+  margin-top: 15px;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progress-bar-animated {
+  height: 100%;
+  width: 0%;
+  background-color: #4a6ed0;
+  animation: progress-animation 2.5s ease-in-out infinite;
+}
+
+@keyframes progress-animation {
+  0% {
+    width: 0%;
+    margin-left: 0%;
+  }
+  50% {
+    width: 70%;
+    margin-left: 0%;
+  }
+  70% {
+    width: 50%;
+    margin-left: 50%;
+  }
+  100% {
+    width: 0%;
+    margin-left: 100%;
+  }
+} 
