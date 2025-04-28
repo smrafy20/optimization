@@ -66,7 +66,7 @@ A Flask web application for extracting text from PDF files using various methods
 ## Output Formats
 
 - **TXT**: Plain text output (available for all methods)
-- **DOCX**: Microsoft Word document (available only for NO OCR Based Bangla method)
+- **DOCX**: Microsoft Word document.
 
 ## Notes
 
