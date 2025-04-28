@@ -24,6 +24,13 @@ document.addEventListener('DOMContentLoaded', function() {
     const statusMessage = document.getElementById('status-message');
     const successAnimation = document.getElementById('success-animation');
     const flashMessages = document.getElementById('flash-messages');
+    const docxFormatContainer = document.getElementById('docx_format_container');
+    const formatHelpText = document.getElementById('format_help_text');
+    const processingMethods = document.querySelectorAll('input[name="processing_method"]');
+    
+    // Show DOCX option for all methods
+    if (docxFormatContainer) docxFormatContainer.style.display = 'inline-block';
+    if (formatHelpText) formatHelpText.textContent = 'Choose between TXT or DOCX output formats';
     
     // Hide flash messages if we're returning from download page
     if (flashMessages && (localStorage.getItem('suppressFlashMessages') === 'true' || localStorage.getItem('downloadInitiated') === 'true')) {

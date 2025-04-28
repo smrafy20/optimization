@@ -91,8 +91,8 @@ def extract_bangla_text_from_pdf(pdf_path, output_txt_path=None, split_pages=Tru
 # Main execution
 if __name__ == "__main__":
     # Update with your local paths
-    pdf_path = "bgs.pdf"  # PDF in the same directory as the script
-    output_txt_path = "bgs.txt"
+    pdf_path = "en.pdf"  # PDF in the same directory as the script
+    output_txt_path = "en.txt"
     
     # Set split_pages=True to process each page as two separate pages (left and right)
     extracted_text = extract_bangla_text_from_pdf(pdf_path, output_txt_path, split_pages=True)
@@ -100,10 +100,3 @@ if __name__ == "__main__":
     print("\n===== EXTRACTED TEXT PREVIEW =====")
     print(extracted_text[:500] + "..." if len(extracted_text) > 500 else extracted_text)
     print("==================================")
-
-    
-
-# Work for the spilled PDFS. Best for MCQ Pdfs
-# Break the pdf pages to the left and right part.
-# Bangla & English both supported.
-# Annoying header and footer texts.

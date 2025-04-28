@@ -9,7 +9,7 @@ from werkzeug.utils import secure_filename
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 # Import functions from each PDF processing module
-# Removing No_OCR_bn_raw imports
+from No_OCR_bn_raw import convert_bijoy_pdf_to_unicode_txt, convert_bijoy_pdf_to_unicode_docx
 from No_OCR_eng import pdf_to_text
 from OCR_bn_raw import extract_bangla_text_from_pdf
 from OCR_multi import extract_text_from_pdf
@@ -65,19 +65,104 @@ def process_pdf():
         
         # Process the file based on the selected method
         try:
-            # Removed 'no_ocr_bangla' option
-            if processing_method == 'no_ocr_english':
-                pdf_to_text(filepath, output_filepath)
+            if processing_method == 'no_ocr_bangla':
+                if output_format == 'txt':
+                    convert_bijoy_pdf_to_unicode_txt(filepath, output_filepath)
+                elif output_format == 'docx':
+                    convert_bijoy_pdf_to_unicode_docx(filepath, output_filepath)
+            
+            elif processing_method == 'no_ocr_english':
+                if output_format == 'txt':
+                    pdf_to_text(filepath, output_filepath)
+                elif output_format == 'docx':
+                    # For DOCX output, we need to convert the extracted text to a Word document
+                    # First get the text using the existing function
+                    temp_txt_path = os.path.join(app.config['UPLOAD_FOLDER'], f"temp_{os.path.splitext(filename)[0]}.txt")
+                    pdf_to_text(filepath, temp_txt_path)
+                    
+                    # Then convert the text file to DOCX
+                    from docx import Document
+                    document = Document()
+                    
+                    # Read the text file and add its content to the DOCX
+                    with open(temp_txt_path, 'r', encoding='utf-8') as txt_file:
+                        for line in txt_file:
+                            document.add_paragraph(line.strip())
+                    
+                    # Save the DOCX file
+                    document.save(output_filepath)
+                    
+                    # Remove the temporary text file
+                    if os.path.exists(temp_txt_path):
+                        os.remove(temp_txt_path)
             
             elif processing_method == 'ocr_bangla':
-                extract_bangla_text_from_pdf(filepath, output_filepath)
+                if output_format == 'txt':
+                    extract_bangla_text_from_pdf(filepath, output_filepath)
+                elif output_format == 'docx':
+                    # Similar approach: get text first, then convert to DOCX
+                    temp_txt_path = os.path.join(app.config['UPLOAD_FOLDER'], f"temp_{os.path.splitext(filename)[0]}.txt")
+                    extract_bangla_text_from_pdf(filepath, temp_txt_path)
+                    
+                    # Convert to DOCX
+                    from docx import Document
+                    document = Document()
+                    
+                    with open(temp_txt_path, 'r', encoding='utf-8') as txt_file:
+                        for line in txt_file:
+                            document.add_paragraph(line.strip())
+                    
+                    document.save(output_filepath)
+                    
+                    # Remove the temporary text file
+                    if os.path.exists(temp_txt_path):
+                        os.remove(temp_txt_path)
             
             elif processing_method == 'ocr_multi':
-                language = None  # Auto-detect language
-                extract_text_from_pdf(filepath, output_filepath, language)
+                language = request.form.get('language', None)  # Get language from form
+                
+                if output_format == 'txt':
+                    extract_text_from_pdf(filepath, output_filepath, language)
+                elif output_format == 'docx':
+                    # Get text first, then convert to DOCX
+                    temp_txt_path = os.path.join(app.config['UPLOAD_FOLDER'], f"temp_{os.path.splitext(filename)[0]}.txt")
+                    extract_text_from_pdf(filepath, temp_txt_path, language)
+                    
+                    # Convert to DOCX
+                    from docx import Document
+                    document = Document()
+                    
+                    with open(temp_txt_path, 'r', encoding='utf-8') as txt_file:
+                        for line in txt_file:
+                            document.add_paragraph(line.strip())
+                    
+                    document.save(output_filepath)
+                    
+                    # Remove the temporary text file
+                    if os.path.exists(temp_txt_path):
+                        os.remove(temp_txt_path)
             
             elif processing_method == 'ocr_split':
-                extract_bangla_text_split(filepath, output_filepath, split_pages=True)
+                if output_format == 'txt':
+                    extract_bangla_text_split(filepath, output_filepath, split_pages=True)
+                elif output_format == 'docx':
+                    # Get text first, then convert to DOCX
+                    temp_txt_path = os.path.join(app.config['UPLOAD_FOLDER'], f"temp_{os.path.splitext(filename)[0]}.txt")
+                    extract_bangla_text_split(filepath, temp_txt_path, split_pages=True)
+                    
+                    # Convert to DOCX
+                    from docx import Document
+                    document = Document()
+                    
+                    with open(temp_txt_path, 'r', encoding='utf-8') as txt_file:
+                        for line in txt_file:
+                            document.add_paragraph(line.strip())
+                    
+                    document.save(output_filepath)
+                    
+                    # Remove the temporary text file
+                    if os.path.exists(temp_txt_path):
+                        os.remove(temp_txt_path)
             
             else:
                 flash('Invalid processing method selected', 'error')

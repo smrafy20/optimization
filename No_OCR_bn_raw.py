@@ -52,13 +52,6 @@ def convert_bijoy_pdf_to_unicode_txt(pdf_path, output_txt_path=None):
     print(f"✅ Unicode Bangla text file saved to: {output_txt_path}")
     return output_txt_path
 
-# Example usage
-pdf_file_path = "bn.pdf"  # Replace with your actual PDF path
-
-# Output file will automatically use the same name with different extension
-convert_bijoy_pdf_to_unicode_txt(pdf_file_path)
-
-
 # No OCR approach.
 # Only works fine with bangla pdf. English not supported.
 # Accuracy is good.

@@ -240,6 +240,16 @@
 
                     <div class="processing-option">
                         <div class="form-check">
+                            <input class="form-check-input" type="radio" name="processing_method" id="no_ocr_bangla" value="no_ocr_bangla">
+                            <label class="form-check-label" for="no_ocr_bangla">
+                                <strong>NO OCR Based Bangla</strong> - For Bangla PDF files with Bijoy text
+                            </label>
+                        </div>
+                        <small class="text-muted">Converts Bijoy ASCII text in PDFs to Unicode Bangla without OCR</small>
+                    </div>
+
+                    <div class="processing-option">
+                        <div class="form-check">
                             <input class="form-check-input" type="radio" name="processing_method" id="ocr_bangla" value="ocr_bangla">
                             <label class="form-check-label" for="ocr_bangla">
                                 <strong>OCR Based Bangla</strong> - For image-based Bangla PDF files
@@ -258,6 +268,19 @@
                         <small class="text-muted">Uses OCR with auto-language detection for mixed content PDF files</small>
                     </div>
 
+                    <!-- Language selection dropdown (only shown when OCR Multi is selected) -->
+                    <div id="language-selector" class="mb-3 ms-4 mt-2" style="display: none;">
+                        <label for="language" class="form-label">Select specific language (optional):</label>
+                        <select class="form-select" name="language" id="language">
+                            <option value="">Auto-detect (Default)</option>
+                            <option value="ben">Bangla</option>
+                            <option value="eng">English</option>
+                            <option value="ben+eng">Bangla and English</option>
+                            <option value="eng+ben">English and Bangla</option>
+                        </select>
+                        <small class="text-muted">Select a language for OCR processing or leave as auto-detect</small>
+                    </div>
+
                     <div class="processing-option">
                         <div class="form-check">
                             <input class="form-check-input" type="radio" name="processing_method" id="ocr_split" value="ocr_split">
@@ -274,7 +297,11 @@
                             <input class="form-check-input" type="radio" name="output_format" id="txt_format" value="txt" checked>
                             <label class="form-check-label" for="txt_format">TXT</label>
                         </div>
-                        <small class="form-text text-muted">All processing methods output to TXT format</small>
+                        <div class="form-check form-check-inline" id="docx_format_container">
+                            <input class="form-check-input" type="radio" name="output_format" id="docx_format" value="docx">
+                            <label class="form-check-label" for="docx_format">DOCX</label>
+                        </div>
+                        <small class="form-text text-muted" id="format_help_text">All processing methods output to TXT format</small>
                     </div>
 
                     <div class="d-grid gap-2 mt-4">
@@ -440,6 +467,9 @@
                 switch (selectedMethod) {
                     case 'no_ocr_english':
                         processingMessage = 'Extracting text from your English PDF...';
+                        break;
+                    case 'no_ocr_bangla':
+                        processingMessage = 'Converting Bijoy ASCII text to Unicode Bangla...';
                         break;
                     case 'ocr_bangla':
                         processingMessage = 'Extracting Bangla text using OCR...';
