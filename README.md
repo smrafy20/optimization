@@ -1,59 +1,103 @@
-# PDF Text Extractor
+# PDF Text Extractor - Multi-Method Conversion Tool
 
-A Flask web application for extracting text from PDF files using automatic language detection, with special support for Bangla and English mixed content.
+A comprehensive Flask-based web application that extracts text from PDF files using **three different processing methods**: No OCR, OCR-based, and GenAI-powered extraction.
 
-## Features
+## 🚀 Features
 
-- **NO OCR**: Direct text extraction with automatic language detection for both Bangla and English
-- **OCR Based**: Image-based text extraction with automatic language detection for both Bangla and English
-- Supports both TXT and DOCX output formats
-- Handles mixed language content seamlessly
-- Fast and accurate processing
+### Three Processing Methods:
 
-## Requirements
+#### 1. **No OCR Method** 
+- Direct text extraction from text-based PDFs
+- Auto-detects Bangla (with Bijoy conversion) and English
+- Fast and accurate for digital PDFs with embedded text
+- Best for: Clean PDFs with selectable text
 
-- Python 3.7+
-- Tesseract OCR (for OCR-based methods)
-- Poppler (for PDF to image conversion)
+#### 2. **OCR Method**
+- Image-based text recognition using Tesseract
+- Auto-detects and processes Bangla and English content
+- Converts PDF pages to images and extracts text
+- Best for: Scanned documents and image-based PDFs
 
-## Installation
+#### 3. **GenAI Method** (NEW!)
+- Powered by Google Gemini AI (gemini-2.0-flash-exp)
+- High accuracy for complex layouts and mixed languages
+- Intelligent text extraction with context understanding
+- Best for: Complex documents, challenging layouts, mixed content
+- **Requires: Google Gemini API Key**
 
-1. Clone the repository:
-   ```
-   git clone <repository-url>
-   cd pdf-text-extractor
-   ```
+## 📋 Features Overview
 
-2. Install Python dependencies:
-   ```
+- ✅ **Multiple output formats**: TXT and DOCX
+- ✅ **Auto language detection**: Automatically detects Bangla, English, or mixed content
+- ✅ **Drag & drop file upload**: User-friendly interface
+- ✅ **Real-time processing status**: Visual feedback during conversion
+- ✅ **Responsive design**: Works on desktop and mobile
+- ✅ **Error handling**: Graceful error messages and recovery
+
+## 🛠️ Installation
+
+### Prerequisites
+
+1. **Python 3.8+**
+2. **Tesseract OCR** (for OCR method)
+   - Windows: Download from [GitHub](https://github.com/UB-Mannheim/tesseract/wiki)
+   - Install to: `C:\Program Files\Tesseract-OCR\`
+3. **Poppler** (for PDF to image conversion)
+   - Windows: Download from [GitHub](https://github.com/oschwartz10612/poppler-windows/releases)
+   - Extract to: `C:\Program Files\poppler-24.08.0\`
+4. **Google Gemini API Key** (for GenAI method)
+   - Get free API key from [Google AI Studio](https://ai.google.dev/)
+
+### Setup Steps
+
+1. **Install Python dependencies**
+   ```bash
    pip install -r requirements.txt
    ```
 
-3. Install Tesseract OCR:
-   - **Windows**: Download and install from [Tesseract at UB Mannheim](https://github.com/UB-Mannheim/tesseract/wiki)
-   - **Mac**: `brew install tesseract tesseract-lang`
-   - **Linux**: `sudo apt-get install tesseract-ocr tesseract-ocr-ben` (include Bengali language pack)
+2. **Install Tesseract Language Data**
+   - Download Bengali language data: [ben.traineddata](https://github.com/tesseract-ocr/tessdata)
+   - Place in: `C:\Program Files\Tesseract-OCR\tessdata\`
 
-4. Install Poppler:
-   - **Windows**: Download from [poppler for Windows](https://github.com/oschwartz10612/poppler-windows/releases/)
-   - **Mac**: `brew install poppler`
-   - **Linux**: `sudo apt-get install poppler-utils`
+## 🚀 Usage
 
-5. Update the paths in the code if necessary:
-   - In `OCR_unified.py`, update the Tesseract and Poppler paths according to your installation.
+### Starting the Application
 
-## Usage
+```bash
+python app.py
+```
 
-1. Start the Flask application:
-   ```
-   python app.py
-   ```
+The application will start on `http://127.0.0.1:5000`
 
-2. Open a web browser and navigate to `http://localhost:5000`
+### Using the Web Interface
 
-3. Upload a PDF file, select the processing method (NO OCR or OCR), and click "Process PDF"
+1. **Upload a PDF file**
+   - Drag & drop or click "Browse File"
+   - Maximum file size: 16MB
 
-4. The processed file will be automatically downloaded
+2. **Select Processing Method**
+   - **No OCR**: For text-based PDFs (fastest)
+   - **OCR**: For scanned/image PDFs (moderate speed)
+   - **GenAI**: For complex layouts (requires API key, most accurate)
+
+3. **Enter API Key** (GenAI only)
+   - Paste your Google Gemini API key when using GenAI method
+
+4. **Choose Output Format**
+   - TXT: Plain text file
+   - DOCX: Microsoft Word document
+
+5. **Click "Process PDF"**
+   - Wait for processing to complete
+   - Download will start automatically
+
+## 🎯 When to Use Each Method
+
+| Method | Use Case | Speed | Accuracy | Cost |
+|--------|----------|-------|----------|------|
+| **No OCR** | Digital PDFs with selectable text | ⚡ Fastest | ✅ High | Free |
+| **OCR** | Scanned documents, images | ⏱️ Moderate | ✅ Good | Free |
+| **GenAI** | Complex layouts, mixed languages | ⏱️ Moderate | ⭐ Excellent | Paid API |
 
 ## Processing Methods
 

@@ -163,6 +163,35 @@
             border-radius: 5px;
             background-color: #e9ecef;
         }
+        
+        /* API Key Section Styles */
+        #api-key-section {
+            padding: 15px;
+            border: 2px dashed #4a6ed0;
+            border-radius: 8px;
+            background-color: #f8f9fa;
+            margin-top: 15px;
+        }
+        
+        #api-key-section .form-control {
+            border: 1px solid #4a6ed0;
+        }
+        
+        #api-key-section .form-control:focus {
+            border-color: #3a5bb0;
+            box-shadow: 0 0 0 0.2rem rgba(74, 110, 208, 0.25);
+        }
+        
+        #api-key-section label {
+            color: #4a6ed0;
+            font-weight: 500;
+        }
+        
+        .processing-active {
+            background-color: #e7f0ff !important;
+            border-color: #4a6ed0 !important;
+            box-shadow: 0 0 0 0.2rem rgba(74, 110, 208, 0.15);
+        }
     </style>
 </head>
 <body>
@@ -246,6 +275,31 @@
                             </label>
                         </div>
                         <small class="text-muted">Automatically detects and processes both Bangla and English mixed content using OCR. Best for scanned or image-based PDFs.</small>
+                    </div>
+
+                    <div class="processing-option">
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="processing_method" id="genai" value="genai">
+                            <label class="form-check-label" for="genai">
+                                <strong>GenAI Based</strong> - Google Gemini AI-powered extraction
+                            </label>
+                        </div>
+                        <small class="text-muted">Uses Google Gemini AI to extract text from PDF pages. Provides high accuracy for complex layouts, mixed languages, and challenging documents. Requires API key.</small>
+                    </div>
+
+                    <!-- API Key field for GenAI (hidden by default) -->
+                    <div id="api-key-section" class="mt-3" style="display: none;">
+                        <div class="form-group">
+                            <label for="api_key" class="form-label">
+                                <strong>Gemini API Key</strong> 
+                                <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" class="form-control" id="api_key" name="api_key" 
+                                   placeholder="Enter your Google Gemini API Key">
+                            <small class="form-text text-muted">
+                                Get your free API key from <a href="https://ai.google.dev/" target="_blank">Google AI Studio</a>
+                            </small>
+                        </div>
                     </div>
 
                     <h5 class="mb-3 mt-4">Output Format:</h5>
@@ -418,6 +472,17 @@
                 // Get selected processing method
                 const selectedMethod = document.querySelector('input[name="processing_method"]:checked').value;
                 
+                // Check if GenAI is selected and API key is provided
+                if (selectedMethod === 'genai') {
+                    const apiKeyInput = document.getElementById('api_key');
+                    if (!apiKeyInput.value || apiKeyInput.value.trim() === '') {
+                        e.preventDefault();
+                        showStatus('Please enter your Gemini API Key for GenAI processing', 'danger');
+                        apiKeyInput.focus();
+                        return;
+                    }
+                }
+                
                 // Update the processing message based on the selected method
                 let processingMessage = 'Processing your PDF...';
                 
@@ -427,6 +492,9 @@
                         break;
                     case 'ocr':
                         processingMessage = 'Processing with OCR and auto language detection...';
+                        break;
+                    case 'genai':
+                        processingMessage = 'Processing with Google Gemini AI...';
                         break;
                 }
                 
@@ -539,6 +607,23 @@
                         }
                     });
                 }
+            });
+            
+            // Show/hide API key field based on processing method selection
+            const apiKeySection = document.getElementById('api-key-section');
+            const processingMethodRadios = document.querySelectorAll('input[name="processing_method"]');
+            
+            processingMethodRadios.forEach(radio => {
+                radio.addEventListener('change', function() {
+                    if (this.value === 'genai') {
+                        apiKeySection.style.display = 'block';
+                        apiKeySection.classList.add('animate__animated', 'animate__fadeIn');
+                        document.getElementById('api_key').required = true;
+                    } else {
+                        apiKeySection.style.display = 'none';
+                        document.getElementById('api_key').required = false;
+                    }
+                });
             });
         });
     </script>
