@@ -3,60 +3,119 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PDF Text Extractor</title>
+    <title>DocuCraft Pro - Advanced PDF Text Extraction</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
     <style>
+        :root {
+            --bkash-pink: #E2136E;
+            --bkash-dark-pink: #C10E5D;
+            --bkash-light-pink: #FF4FA0;
+            --bkash-white: #FFFFFF;
+        }
+        
         body {
-            background-color: #f8f9fa;
+            background: linear-gradient(135deg, #FFFFFF 0%, #FFF5F9 100%);
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
         }
         .container {
-            max-width: 800px;
-            margin-top: 50px;
-            margin-bottom: 50px;
+            max-width: 900px;
+            margin-top: 20px;
+            margin-bottom: 20px;
         }
         .card {
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(226, 19, 110, 0.15);
+            border: none;
+            overflow: hidden;
         }
         .card-header {
-            background-color: #4a6ed0;
+            background: linear-gradient(135deg, var(--bkash-pink) 0%, var(--bkash-dark-pink) 100%);
             color: white;
             font-weight: bold;
-            border-radius: 10px 10px 0 0 !important;
+            border-radius: 20px 20px 0 0 !important;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .card-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: shimmer 3s infinite;
+        }
+        @keyframes shimmer {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-30%, -30%) scale(1.1); }
+        }
+        .card-header h2 {
+            font-size: 1.6rem;
+            margin-bottom: 5px;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        .card-header p {
+            opacity: 0.95;
+            font-size: 0.9rem;
         }
         .btn-primary {
-            background-color: #4a6ed0;
-            border-color: #4a6ed0;
+            background: linear-gradient(135deg, var(--bkash-pink) 0%, var(--bkash-dark-pink) 100%);
+            border: none;
+            padding: 12px 30px;
+            font-weight: 600;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(226, 19, 110, 0.3);
         }
         .btn-primary:hover {
-            background-color: #3a5bb0;
-            border-color: #3a5bb0;
+            background: linear-gradient(135deg, var(--bkash-dark-pink) 0%, var(--bkash-pink) 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(226, 19, 110, 0.4);
+        }
+        .btn-outline-primary {
+            color: var(--bkash-pink);
+            border-color: var(--bkash-pink);
+            font-weight: 600;
+        }
+        .btn-outline-primary:hover {
+            background-color: var(--bkash-pink);
+            border-color: var(--bkash-pink);
+            color: white;
         }
         .processing-option {
             margin-bottom: 10px;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            transition: all 0.3s;
+            padding: 12px;
+            border: 2px solid #E9ECEF;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            background-color: white;
         }
         .processing-option:hover {
-            background-color: #f0f0f0;
-            border-color: #4a6ed0;
+            background: linear-gradient(135deg, rgba(226, 19, 110, 0.05) 0%, rgba(255, 79, 160, 0.05) 100%);
+            border-color: var(--bkash-pink);
+            transform: translateX(5px);
+            box-shadow: 0 4px 15px rgba(226, 19, 110, 0.1);
         }
         .file-upload {
-            border: 2px dashed #ddd;
+            border: 3px dashed #E9ECEF;
             padding: 20px;
-            border-radius: 5px;
+            border-radius: 15px;
             text-align: center;
             margin-bottom: 20px;
-            transition: all 0.3s;
+            transition: all 0.3s ease;
+            background-color: white;
         }
         .file-upload:hover {
-            border-color: #4a6ed0;
+            border-color: var(--bkash-pink);
+            background: linear-gradient(135deg, rgba(226, 19, 110, 0.03) 0%, rgba(255, 79, 160, 0.03) 100%);
         }
         .file-upload-preview {
             display: none;
@@ -66,29 +125,37 @@
             border-radius: 5px;
         }
         
-        /* Added new styles for footer */
+        /* Brand Footer */
         footer {
-            text-align: center;
+            background: linear-gradient(135deg, var(--bkash-pink) 0%, var(--bkash-dark-pink) 100%);
+            color: white;
+            padding: 20px 0;
             margin-top: 30px;
-            padding: 15px;
-            color: #6c757d;
-            font-size: 0.9rem;
-            border-top: 1px solid #eaeaea;
+            box-shadow: 0 -5px 20px rgba(226, 19, 110, 0.2);
+            text-align: center;
+        }
+        
+        .bkash-logo-text {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+            margin-bottom: 5px;
+            letter-spacing: 1px;
         }
         
         .copyright {
-            display: inline-block;
-            padding: 8px 15px;
-            border-radius: 20px;
-            background-color: #f8f9fa;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-            transition: all 0.3s ease;
+            font-size: 0.85rem;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+            color: white;
+            margin: 5px 0;
         }
         
-        .copyright:hover {
-            background-color: #e9ecef;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transform: translateY(-2px);
+        .powered-by {
+            font-size: 0.85rem;
+            opacity: 0.9;
+            margin-top: 8px;
         }
 
         /* Progress styles */
@@ -133,64 +200,117 @@
         }
         
         .status-success {
-            background-color: #28a745;
-            color: white;
+            background: linear-gradient(135deg, var(--bkash-pink) 0%, var(--bkash-dark-pink) 100%);\n            color: white;
+        }
+        
+        .card-body {
+            padding: 25px;
         }
         
         .drag-area {
-            padding: 30px;
-            border: 3px dashed #ddd;
-            border-radius: 10px;
+            padding: 25px;
+            border: 3px dashed #E9ECEF;
+            border-radius: 15px;
             text-align: center;
-            transition: all 0.3s;
+            transition: all 0.3s ease;
             cursor: pointer;
+            background-color: white;
         }
         
         .drag-area.active {
-            border-color: #4a6ed0;
-            background-color: rgba(74, 110, 208, 0.1);
+            border-color: var(--bkash-pink);
+            background: linear-gradient(135deg, rgba(226, 19, 110, 0.08) 0%, rgba(255, 79, 160, 0.08) 100%);
+            box-shadow: 0 5px 20px rgba(226, 19, 110, 0.15);
         }
         
         .drag-area .icon {
-            font-size: 50px;
-            color: #4a6ed0;
+            font-size: 45px;
+            color: var(--bkash-pink);
+            margin-bottom: 10px;
         }
         
         .file-details {
             display: none;
             margin-top: 15px;
-            padding: 10px;
-            border-radius: 5px;
-            background-color: #e9ecef;
+            padding: 15px 20px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, rgba(226, 19, 110, 0.08) 0%, rgba(255, 79, 160, 0.08) 100%);\n            border: 2px solid rgba(226, 19, 110, 0.2);
+            font-weight: 500;
         }
         
         /* API Key Section Styles */
         #api-key-section {
             padding: 15px;
-            border: 2px dashed #4a6ed0;
-            border-radius: 8px;
-            background-color: #f8f9fa;
-            margin-top: 15px;
+            border: 2px dashed var(--bkash-pink);
+            border-radius: 12px;
+            background: linear-gradient(135deg, rgba(226, 19, 110, 0.05) 0%, rgba(255, 79, 160, 0.05) 100%);
+            margin-top: 10px;
         }
         
         #api-key-section .form-control {
-            border: 1px solid #4a6ed0;
+            border: 2px solid var(--bkash-pink);
+            border-radius: 8px;
         }
         
         #api-key-section .form-control:focus {
-            border-color: #3a5bb0;
-            box-shadow: 0 0 0 0.2rem rgba(74, 110, 208, 0.25);
+            border-color: var(--bkash-dark-pink);
+            box-shadow: 0 0 0 0.2rem rgba(226, 19, 110, 0.25);
         }
         
         #api-key-section label {
-            color: #4a6ed0;
-            font-weight: 500;
+            color: var(--bkash-pink);
+            font-weight: 600;
         }
         
         .processing-active {
-            background-color: #e7f0ff !important;
-            border-color: #4a6ed0 !important;
-            box-shadow: 0 0 0 0.2rem rgba(74, 110, 208, 0.15);
+            background: linear-gradient(135deg, rgba(226, 19, 110, 0.08) 0%, rgba(255, 79, 160, 0.08) 100%) !important;
+            border-color: var(--bkash-pink) !important;
+            box-shadow: 0 0 0 0.2rem rgba(226, 19, 110, 0.15);
+        }
+        
+        .form-check-input:checked {
+            background-color: var(--bkash-pink);
+            border-color: var(--bkash-pink);
+        }
+        
+        h5 {
+            color: var(--bkash-dark-pink);
+            font-weight: 600;
+        }
+        
+        /* Project Brand Header */
+        .bkash-header-logo {
+            margin-bottom: 20px;
+            animation: fadeInDown 0.8s ease;
+        }
+        
+        @keyframes fadeInDown {
+            0% {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .bkash-brand {
+            font-size: 3rem;
+            font-weight: 900;
+            color: var(--bkash-pink);
+            text-shadow: 2px 2px 4px rgba(226, 19, 110, 0.2);
+            letter-spacing: 2px;
+            display: block;
+        }
+        
+        .aml-subtitle {
+            font-size: 1.2rem;
+            color: var(--bkash-dark-pink);
+            font-weight: 600;
+            display: block;
+            margin-top: 5px;
+            letter-spacing: 3px;
         }
     </style>
 </head>
@@ -218,8 +338,8 @@
     <div class="container">
         <div class="card">
             <div class="card-header text-center">
-                <h2>PDF Text Extractor</h2>
-                <p class="mb-0">Extract text from PDF files using different methods</p>
+                <h2>DocuCraft PRO</h2>
+                <p class="mb-0">Crafting perfect text from documents</p>
             </div>
             <div class="card-body">
                 <div id="status-message" class="status-message mb-4"></div>
@@ -255,7 +375,7 @@
                         </div>
                     </div>
 
-                    <h5 class="mb-3 mt-4">Select Processing Method:</h5>
+                    <h5 class="mb-2 mt-3">Select Processing Method:</h5>
                     
                     <div class="processing-option">
                         <div class="form-check">
@@ -264,7 +384,7 @@
                                 <strong>No OCR</strong> - Direct text extraction with auto language detection
                             </label>
                         </div>
-                        <small class="text-muted">Automatically detects and processes both Bangla and English mixed content without OCR. Fast and accurate for text-based PDFs.</small>
+                        <small class="text-muted">Fast and accurate for text-based PDFs</small>
                     </div>
 
                     <div class="processing-option">
@@ -274,7 +394,7 @@
                                 <strong>OCR Based</strong> - Image-based extraction with auto language detection
                             </label>
                         </div>
-                        <small class="text-muted">Automatically detects and processes both Bangla and English mixed content using OCR. Best for scanned or image-based PDFs.</small>
+                        <small class="text-muted">Best for scanned or image-based documents</small>
                     </div>
 
                     <div class="processing-option">
@@ -284,7 +404,7 @@
                                 <strong>GenAI Based</strong> - Google Gemini AI-powered extraction
                             </label>
                         </div>
-                        <small class="text-muted">Uses Google Gemini AI to extract text from PDF pages. Provides high accuracy for complex layouts, mixed languages, and challenging documents. Requires API key.</small>
+                        <small class="text-muted">High accuracy for complex layouts and mixed languages (Requires API key)</small>
                     </div>
 
                     <!-- API Key field for GenAI (hidden by default) -->
@@ -302,7 +422,7 @@
                         </div>
                     </div>
 
-                    <h5 class="mb-3 mt-4">Output Format:</h5>
+                    <h5 class="mb-2 mt-3">Output Format:</h5>
                     <div class="mb-3">
                         <div class="form-check form-check-inline">
                             <input class="form-check-input" type="radio" name="output_format" id="txt_format" value="txt" checked>
@@ -312,10 +432,10 @@
                             <input class="form-check-input" type="radio" name="output_format" id="docx_format" value="docx">
                             <label class="form-check-label" for="docx_format">DOCX</label>
                         </div>
-                        <small class="form-text text-muted" id="format_help_text">All processing methods output to TXT format</small>
+                        <small class="form-text text-muted" id="format_help_text">Choose your preferred output format</small>
                     </div>
 
-                    <div class="d-grid gap-2 mt-4">
+                    <div class="d-grid gap-2 mt-3">
                         <button type="submit" id="process-btn" class="btn btn-primary btn-lg">
                             <i class="fas fa-cogs me-2"></i>Process PDF
                         </button>
@@ -327,8 +447,11 @@
     
     <!-- Copyright Footer -->
     <footer>
-        <div class="copyright">
-            <span>Copyright &copy; DataSoft 2025. All rights reserved.</span>
+        <div class="container">
+            <div class="bkash-logo-text">DocuCraft Pro</div>
+            <div class="copyright">
+                © 2025 Datasoft. All Rights Reserved.
+            </div>
         </div>
     </footer>
 

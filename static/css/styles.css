@@ -1,22 +1,34 @@
 /**
- * PDF Text Extractor - Custom Styles
+ * DocuCraft Pro - Custom Styles
+ * © 2025 Datasoft. All Rights Reserved.
  */
+
+/* Brand Colors */
+:root {
+  --bkash-pink: #E2136E;
+  --bkash-dark-pink: #C10E5D;
+  --bkash-light-pink: #FF4FA0;
+  --bkash-white: #FFFFFF;
+  --bkash-gray: #F8F9FA;
+  --bkash-dark-gray: #6C757D;
+  --bkash-border: #E9ECEF;
+}
 
 /* PDF Processing animations */
 @keyframes pulse-border {
   0% {
-    border-color: #4a6ed0;
-    box-shadow: 0 0 0 0 rgba(74, 110, 208, 0.7);
+    border-color: var(--bkash-pink);
+    box-shadow: 0 0 0 0 rgba(226, 19, 110, 0.7);
   }
   
   70% {
-    border-color: #3a5bb0;
-    box-shadow: 0 0 0 10px rgba(74, 110, 208, 0);
+    border-color: var(--bkash-dark-pink);
+    box-shadow: 0 0 0 10px rgba(226, 19, 110, 0);
   }
   
   100% {
-    border-color: #4a6ed0;
-    box-shadow: 0 0 0 0 rgba(74, 110, 208, 0);
+    border-color: var(--bkash-pink);
+    box-shadow: 0 0 0 0 rgba(226, 19, 110, 0);
   }
 }
 
@@ -49,7 +61,7 @@
   stroke-dashoffset: 166;
   stroke-width: 2;
   stroke-miterlimit: 10;
-  stroke: #28a745;
+  stroke: var(--bkash-pink);
   fill: none;
   animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
 }
@@ -78,8 +90,52 @@
 
 @keyframes fill {
   100% {
-    box-shadow: inset 0px 0px 0px 30px #28a745;
+    box-shadow: inset 0px 0px 0px 30px var(--bkash-pink);
   }
+}
+
+/* Brand Footer */
+.bkash-footer {
+  background: linear-gradient(135deg, var(--bkash-pink) 0%, var(--bkash-dark-pink) 100%);
+  color: var(--bkash-white);
+  padding: 25px 0;
+  margin-top: 50px;
+  box-shadow: 0 -5px 20px rgba(226, 19, 110, 0.15);
+}
+
+.bkash-footer .copyright {
+  font-size: 0.95rem;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+}
+226, 19, 110, 0.5);
+}
+
+/* Bkash gradient backgrounds */
+.bkash-gradient {
+  background: linear-gradient(135deg, var(--bkash-pink) 0%, var(--bkash-dark-pink) 100%);
+}
+
+.bkash-gradient-light {
+  background: linear-gradient(135deg, rgba(226, 19, 110, 0.1) 0%, rgba(255, 79, 160, 0.1) 100%
+.bkash-footer .bkash-logo-text {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: var(--bkash-white);
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+  margin-bottom: 10px;
+  letter-spacing: 1px;
+}
+
+.bkash-footer .aml-badge {
+  background-color: rgba(255, 255, 255, 0.2);
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  display: inline-block;
+  margin-top: 10px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 /* Responsive improvements */
