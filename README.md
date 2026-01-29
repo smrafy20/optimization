@@ -1,14 +1,14 @@
 # PDF Text Extractor
 
-A Flask web application for extracting text from PDF files using various methods, including OCR and direct text extraction, with special support for Bangla language.
+A Flask web application for extracting text from PDF files using automatic language detection, with special support for Bangla and English mixed content.
 
 ## Features
 
-- **NO OCR Based Bangla**: Extract text from Bijoy-encoded Bangla PDF files without using OCR
-- **NO OCR Based English**: Extract text from English PDF files without using OCR
-- **OCR Based Bangla**: Use OCR to extract Bangla text from image-based PDFs
-- **OCR Based Multi-Language**: Automatically detect and extract text from PDFs containing both Bangla and English
-- **OCR Split Format**: Split PDF pages into left and right halves before OCR, ideal for MCQ PDFs
+- **NO OCR**: Direct text extraction with automatic language detection for both Bangla and English
+- **OCR Based**: Image-based text extraction with automatic language detection for both Bangla and English
+- Supports both TXT and DOCX output formats
+- Handles mixed language content seamlessly
+- Fast and accurate processing
 
 ## Requirements
 
@@ -40,7 +40,7 @@ A Flask web application for extracting text from PDF files using various methods
    - **Linux**: `sudo apt-get install poppler-utils`
 
 5. Update the paths in the code if necessary:
-   - In `OCR_bn_raw.py`, `OCR_multi.py`, and `OCR_multi_split.py`, update the Tesseract and Poppler paths according to your installation.
+   - In `OCR_unified.py`, update the Tesseract and Poppler paths according to your installation.
 
 ## Usage
 
@@ -51,26 +51,31 @@ A Flask web application for extracting text from PDF files using various methods
 
 2. Open a web browser and navigate to `http://localhost:5000`
 
-3. Upload a PDF file, select the processing method, and click "Process PDF"
+3. Upload a PDF file, select the processing method (NO OCR or OCR), and click "Process PDF"
 
-4. The processed text file will be available for download
+4. The processed file will be automatically downloaded
 
 ## Processing Methods
 
-- **NO OCR Based Bangla**: Best for Bijoy encoded Bangla PDF files with selectable text
-- **NO OCR Based English**: Best for English PDF files with selectable text
-- **OCR Based Bangla**: Good for image-based Bangla PDFs, especially CQ files
-- **OCR Based Multi-Language**: Good for mixed content PDFs with both Bangla and English
-- **OCR Split Format**: Best for MCQ PDFs with split page format
+- **NO OCR**: Direct text extraction with automatic language detection
+  - Automatically detects Bangla (including Bijoy encoding) and English
+  - Fast and accurate for text-based PDFs
+  - Best for PDFs with selectable text
+
+- **OCR Based**: Image-based extraction with automatic language detection
+  - Automatically detects and processes Bangla and English content
+  - Works with scanned documents and image-based PDFs
+  - Slower but works with any PDF type
 
 ## Output Formats
 
-- **TXT**: Plain text output (available for all methods)
-- **DOCX**: Microsoft Word document.
+- **TXT**: Plain text output (available for both methods)
+- **DOCX**: Microsoft Word document (available for both methods)
 
 ## Notes
 
-- The NO OCR methods are faster but require PDFs with selectable text
-- The OCR methods work with any PDF, even scanned documents, but are slower
-- The OCR Split method is specifically designed for MCQ PDFs with questions on both left and right sides
-- For Bangla OCR, make sure the Tesseract Bengali language pack is installed 
+- The NO OCR method is faster but requires PDFs with selectable text
+- The OCR method works with any PDF, even scanned documents, but is slower
+- Both methods automatically detect language, no manual selection needed
+- For Bangla OCR, make sure the Tesseract Bengali language pack is installed
+- Mixed Bangla-English content is fully supported 

@@ -230,65 +230,22 @@
                     
                     <div class="processing-option">
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" name="processing_method" id="no_ocr_english" value="no_ocr_english" checked>
-                            <label class="form-check-label" for="no_ocr_english">
-                                <strong>NO OCR Based English</strong> - For English PDF files
+                            <input class="form-check-input" type="radio" name="processing_method" id="no_ocr" value="no_ocr" checked>
+                            <label class="form-check-label" for="no_ocr">
+                                <strong>No OCR</strong> - Direct text extraction with auto language detection
                             </label>
                         </div>
-                        <small class="text-muted">Uses direct text extraction without OCR for English PDF files</small>
+                        <small class="text-muted">Automatically detects and processes both Bangla and English mixed content without OCR. Fast and accurate for text-based PDFs.</small>
                     </div>
 
                     <div class="processing-option">
                         <div class="form-check">
-                            <input class="form-check-input" type="radio" name="processing_method" id="no_ocr_bangla" value="no_ocr_bangla">
-                            <label class="form-check-label" for="no_ocr_bangla">
-                                <strong>NO OCR Based Bangla</strong> - For Bangla PDF files with Bijoy text
+                            <input class="form-check-input" type="radio" name="processing_method" id="ocr" value="ocr">
+                            <label class="form-check-label" for="ocr">
+                                <strong>OCR Based</strong> - Image-based extraction with auto language detection
                             </label>
                         </div>
-                        <small class="text-muted">Converts Bijoy ASCII text in PDFs to Unicode Bangla without OCR</small>
-                    </div>
-
-                    <div class="processing-option">
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="processing_method" id="ocr_bangla" value="ocr_bangla">
-                            <label class="form-check-label" for="ocr_bangla">
-                                <strong>OCR Based Bangla</strong> - For image-based Bangla PDF files
-                            </label>
-                        </div>
-                        <small class="text-muted">Uses OCR to extract Bangla text from image-based PDFs (good for CQ files)</small>
-                    </div>
-
-                    <div class="processing-option">
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="processing_method" id="ocr_multi" value="ocr_multi">
-                            <label class="form-check-label" for="ocr_multi">
-                                <strong>OCR Based Multi-Language</strong> - Auto-detects Bangla or English
-                            </label>
-                        </div>
-                        <small class="text-muted">Uses OCR with auto-language detection for mixed content PDF files</small>
-                    </div>
-
-                    <!-- Language selection dropdown (only shown when OCR Multi is selected) -->
-                    <div id="language-selector" class="mb-3 ms-4 mt-2" style="display: none;">
-                        <label for="language" class="form-label">Select specific language (optional):</label>
-                        <select class="form-select" name="language" id="language">
-                            <option value="">Auto-detect (Default)</option>
-                            <option value="ben">Bangla</option>
-                            <option value="eng">English</option>
-                            <option value="ben+eng">Bangla and English</option>
-                            <option value="eng+ben">English and Bangla</option>
-                        </select>
-                        <small class="text-muted">Select a language for OCR processing or leave as auto-detect</small>
-                    </div>
-
-                    <div class="processing-option">
-                        <div class="form-check">
-                            <input class="form-check-input" type="radio" name="processing_method" id="ocr_split" value="ocr_split">
-                            <label class="form-check-label" for="ocr_split">
-                                <strong>OCR Split Format</strong> - For MCQ PDFs with split pages
-                            </label>
-                        </div>
-                        <small class="text-muted">Splits PDF pages into left and right halves before OCR (best for MCQ PDF files)</small>
+                        <small class="text-muted">Automatically detects and processes both Bangla and English mixed content using OCR. Best for scanned or image-based PDFs.</small>
                     </div>
 
                     <h5 class="mb-3 mt-4">Output Format:</h5>
@@ -465,20 +422,11 @@
                 let processingMessage = 'Processing your PDF...';
                 
                 switch (selectedMethod) {
-                    case 'no_ocr_english':
-                        processingMessage = 'Extracting text from your English PDF...';
+                    case 'no_ocr':
+                        processingMessage = 'Extracting text with auto language detection...';
                         break;
-                    case 'no_ocr_bangla':
-                        processingMessage = 'Converting Bijoy ASCII text to Unicode Bangla...';
-                        break;
-                    case 'ocr_bangla':
-                        processingMessage = 'Extracting Bangla text using OCR...';
-                        break;
-                    case 'ocr_multi':
-                        processingMessage = 'Analyzing and extracting multi-language content...';
-                        break;
-                    case 'ocr_split':
-                        processingMessage = 'Processing split-page PDF with OCR...';
+                    case 'ocr':
+                        processingMessage = 'Processing with OCR and auto language detection...';
                         break;
                 }
                 
